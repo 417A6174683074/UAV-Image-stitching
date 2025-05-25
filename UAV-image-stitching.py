@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 #Import library
 #import libraries
+
 import sys
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+
 def warpImages(img1, img2, H):
   rows1, cols1 = img1.shape[:2]
   rows2, cols2 = img2.shape[:2]
@@ -30,6 +32,7 @@ def warpImages(img1, img2, H):
 
   return output_img
 #folfer containing images from drones, sorted by name 
+result=None
 import glob
 path = sorted(glob.glob("*.jpg"))
 img_list = []
@@ -40,7 +43,8 @@ for img in path:
 
 #Use ORB detector to extract keypoints
 orb = cv2.ORB_create(nfeatures=2000)
-while True:
+
+while len(img_list)>0:
   img1=img_list.pop(0)
   img2=img_list.pop(0)
 # Find the key points and descriptors with ORB
@@ -77,11 +81,12 @@ while True:
     M, _ = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
     
     result = warpImages(img2, img1, M)
-    
+    print(result)
     img_list.insert(0,result)
     
     if len(img_list)==1:
       break
+
 result = cv2.cvtColor(result, cv2.COLOR_BGR2RGB )  
 plt.imshow(result)
 plt.show()
